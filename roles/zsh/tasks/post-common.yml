@@ -1,0 +1,42 @@
+---
+- name: Settings default shell
+  user:
+    name={{ item.username }}
+    shell=/bin/zsh
+  with_items: users
+  tags:
+    - system
+    - users-oh-my-zsh
+    - config
+
+- name: git clone oh-my-zsh
+  git: 
+    repo=git://github.com/robbyrussell/oh-my-zsh.git 
+    dest=/home/{{ item.username }}/.oh-my-zsh 
+    accept_hostkey=yes
+  with_items: users
+
+- name: Setting permissions
+  file:
+    path=/home/{{ item.username }}/.oh-my-zsh
+    owner={{ item.username }}
+    group={{ item.group if item.group is defined else (users_group if users_group is defined else item.username) }}
+  with_items: users
+  tags:
+    - system
+    - users-oh-my-zsh
+    - config
+
+- name: Configuring oh-my-zsh
+  template:
+    src=home-user-zshrc.j2
+    dest=/home/{{ item.username }}/.zshrc
+    owner={{ item.username }}
+    group={{ item.group if item.group is defined else (users_group if users_group is defined else item.username) }}
+    backup=yes
+    mode=0644
+  with_items: users
+  tags:
+    - system
+    - users-oh-my-zsh
+    - config

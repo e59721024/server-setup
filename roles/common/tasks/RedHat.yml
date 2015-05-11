@@ -1,0 +1,22 @@
+# Basic security
+# ====================================================
+
+- name: Update yum package
+  yum: name="*" state=latest
+  sudo: true
+
+- name: install essential packages
+  yum: name=epel-release state=latest
+
+# - name: Install mosh
+  # yum: name=mosh state=installed
+
+- name: Install fail2ban
+  yum: name=fail2ban state=installed
+
+- name: install essential packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - git-core
+    - python-setuptools
+    - nodejs

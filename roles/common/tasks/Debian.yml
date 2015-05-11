@@ -1,0 +1,36 @@
+# Basic security
+# ====================================================
+
+- name:   Update APT package cache
+  action: apt update_cache=yes cache_valid_time=3600
+
+- name: Install mosh
+  action: apt pkg=mosh state=installed
+
+- name: Install fail2ban
+  action: apt pkg=fail2ban state=installed
+
+- name: install essential packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - build-essential
+    - python-setuptools
+    - python-software-properties
+    - language-pack-ja
+    - tree
+
+- name: Configure firewall tcp
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+    - "22"
+    - "80"
+    - "443"
+    - "3000"
+    - "8080"
+
+- name: Configure firewall udp(mosh using this port range)
+  shell: ufw allow 60000:60010/udp
+
+- name: Enable ufw
+  action: shell echo 'y' | ufw enable
+

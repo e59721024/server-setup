@@ -1,0 +1,13 @@
+---
+- name: Add nginx latest version ppa
+  action: apt_repository repo=ppa:nginx/stable
+
+- name: Install db server packages
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  with_items:
+  - nginx
+
+- name: delete default vhost
+  action: file path=/etc/nginx/sites-enabled/default state=absent
+  notify:
+  - restart nginx

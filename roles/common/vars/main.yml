@@ -1,0 +1,4 @@
+---
+sudo: yes
+add_user: 'deploy'
+deploy_password: 'deploy'

@@ -1,0 +1,63 @@
+---
+- name: Create plugins directory
+  file: state=directory path=/home/{{ username }}/.rbenv/plugins
+  # when: rbenv.env == "system"
+  tags:
+    - rbenv
+
+- name: Install plugins
+  git: >
+    repo={{ item.repo }}
+    dest=/home/{{ username }}/.rbenv/plugins/{{ item.name }}
+    accept_hostkey=true
+  with_items: rbenv_plugins
+  # when: rbenv.env == "system"
+  tags:
+    - rbenv
+
+- name: Check ruby-build installed
+  command: test -x /usr/local/bin/ruby-build
+  register: rbuild_present
+  ignore_errors: yes
+
+- name: Create temporary directory
+  command: mktemp -d
+  register: tempdir
+  when: rbuild_present|failed
+
+- name: Clone ruby-build repo
+  git: repo=git://github.com/sstephenson/ruby-build.git dest={{tempdir.stdout}}/ruby-build accept_hostkey=yes
+  when: rbuild_present|failed
+
+- name: Install ruby-build
+  command: ./install.sh chdir={{tempdir.stdout}}/ruby-build
+  when: rbuild_present|failed
+
+- name: Remove temporary directory
+  file: path={{tempdir.stdout}} state=absent
+  when: rbuild_present|failed
+
+- name: Check ruby ruby_version installed
+  shell: RBENV_ROOT=/home/{{ username }}/.rbenv rbenv versions | grep {{ruby_version}}
+  register: ruby_installed
+  ignore_errors: yes
+
+- name: Install ruby {{ ruby_version }}
+  shell: /bin/sh -lc "RBENV_ROOT=/home/{{ username }}/.rbenv rbenv install {{ruby_version}}"
+  when: ruby_installed|failed
+  register: ruby_installed_by_rbenv
+
+- name: Set global ruby {{ruby_version}}
+  shell: RBENV_ROOT=/home/{{ username }}/.rbenv rbenv global {{ruby_version}}
+  when: ruby_installed|failed
+
+- name: Rehash
+  shell: RBENV_ROOT=/home/{{ username }}/.rbenv rbenv rehash
+  when: ruby_installed|failed
+
+# - name: Install Bundler
+#   command: bash -lc "gem install bundler" create=/home/{{ username }}/.rbenv/versions/{{ ruby_version }}/bin/bundle
+
+- name: Install Bundler
+  command: sudo rbenv exec gem install bundler create=/home/{{ username }}/.rbenv/versions/{{ ruby_version }}/bin/bundler
+  when: ruby_installed_by_rbenv|failed

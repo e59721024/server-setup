@@ -1,0 +1,6 @@
+---
+- name: add node repo
+  apt_repository: repo=ppa:chris-lea/node.js
+
+- name: install node packages
+  apt: name=nodejs state=latest update_cache=yes cache_valid_time=3600

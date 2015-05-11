@@ -1,0 +1,17 @@
+---
+- name: Install PostgreSQL dependencies
+  action: apt pkg={{item}} state=latest
+  with_items:
+  - python-pycurl
+  - python-psycopg2
+
+- name: Add postgres latest version ppa
+  action: apt_repository repo=ppa:pitti/postgresql
+  when: ansible_distribution_release== 'Lucid' or ansible_distribution_release== 'Precise'
+
+- name: Install db server packages
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  with_items:
+  - postgresql
+  - postgresql-contrib
+  - postgresql-common

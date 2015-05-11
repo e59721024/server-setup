@@ -1,0 +1,12 @@
+---
+- include: pre-common.yml
+
+- include: Debian.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - packages
+
+- include: RedHat.yml
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - packages

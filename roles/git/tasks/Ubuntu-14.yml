@@ -1,0 +1,9 @@
+---
+- name: Add git latest version ppa
+  action: apt_repository repo=ppa:git-core/ppa
+
+- name: Install git
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  sudo: yes
+  with_items:
+  - git

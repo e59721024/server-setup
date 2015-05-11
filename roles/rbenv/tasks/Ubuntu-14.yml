@@ -1,0 +1,39 @@
+---
+- name: Install build depends
+  apt: pkg={{ item }} state=latest install_recommends=no
+  with_items:
+  - build-essential
+  - git
+  - libcurl4-openssl-dev
+  - libmysqlclient-dev
+  - libsqlite3-dev
+  - libpq-dev
+  - libreadline6-dev
+  - libssl-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - zlib1g-dev
+  - libc6-dev
+  - libyaml-dev
+
+- name: Install build depends
+  apt: pkg={{ item }} state=latest install_recommends=no
+  sudo: true
+  with_items:
+  - rbenv
+
+- name: ruby-build | install build depends
+  apt: pkg={{ item }} state=latest install_recommends=no
+  with_items:
+  - autoconf
+  - bison
+  - build-essential
+  - libssl-dev
+  - libyaml-dev
+  - libreadline6-dev
+  - zlib1g-dev
+  - libncurses5-dev
+  - libffi-dev
+  - libgdbm3
+  - libgdbm-dev
+

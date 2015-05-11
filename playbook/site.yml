@@ -1,0 +1,25 @@
+---
+- hosts: ubuntu
+  user: vagrant
+  sudo: yes
+  roles:
+    - role: common
+    - role: zsh
+    - role: nodejs
+    - role: rbenv
+    - role: postgres
+    - role: git
+    - role: heroku
+    - role: nginx
+  vars:
+    ruby_version: 2.2.2
+    username: vagrant
+    users:
+      - name: vagrant
+        username: vagrant
+        oh_my_zsh:
+          theme: avit
+    rbenv_plugins:
+      - { name: "rbenv-gem-rehash", repo: "git://github.com/sstephenson/rbenv-gem-rehash.git" }
+      - { name: "rbenv-update", repo: "git://github.com/rkh/rbenv-update.git" }
+      # - { name: "rbenv-default-gems", repo: "git://github.com/sstephenson/rbenv-default-gems.git" }
